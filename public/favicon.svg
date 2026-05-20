@@ -1,0 +1,12 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <rect width="256" height="256" fill="#09090b" rx="64"/>
+  <!-- Meta / Infinity Loop -->
+  <path d="M80,128 C80,88 110,88 128,128 C146,168 176,168 176,128 C176,88 146,88 128,128 C110,168 80,168 80,128 Z" 
+        fill="none" 
+        stroke="#f4f4f5" 
+        stroke-width="16" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  <!-- The Red Slash -->
+  <line x1="80" y1="180" x2="176" y2="76" stroke="#ef4444" stroke-width="20" stroke-linecap="round"/>
+</svg>

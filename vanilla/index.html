@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MetaState</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            zinc: {
+              100: '#f4f4f5',
+              400: '#a1a1aa',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              950: '#09090b',
+            },
+            amber: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+            },
+            live: {
+              500: '#90BE6D',
+              600: '#C9E3AC',
+              900: '#37371F',
+              highlight: '#A0CFD3',
+            },
+            demo: {
+              500: '#E5446D',
+            },
+            accent: {
+              light: '#EAEFBD',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="baccarat-calculator.js"></script>
+</head>
+<body class="h-[100dvh] w-full flex flex-col bg-zinc-950 text-zinc-100 font-sans overflow-hidden">
+  <!-- Header -->
+  <div class="flex-none flex justify-between items-center p-4 bg-zinc-900 border-b border-zinc-800 shadow-sm z-10">
+    <div class="flex items-center gap-5">
+      <div class="flex flex-col select-none">
+        <div class="text-xl font-bold tracking-wider uppercase flex items-center leading-none">
+           <span class="text-zinc-100 font-mono">META</span>
+           <span class="text-red-500 font-black">/</span>
+           <span class="text-zinc-100 font-mono">STATE</span>
+        </div>
+        <span class="text-sm font-mono text-zinc-300 uppercase tracking-[0.25em] mt-1">Explorer</span>
+      </div>
+
+      <div class="flex items-center bg-zinc-950 p-1 rounded-lg border border-zinc-800">
+        <button id="btn-mode-demo" class="px-4 py-1.5 rounded-md text-sm font-medium transition-colors bg-[#E5446D] text-zinc-950 shadow-[0_0_10px_rgba(229,68,109,0.5)]">Demo</button>
+        <button id="btn-mode-live" class="px-4 py-1.5 rounded-md text-sm font-medium transition-colors text-zinc-400 hover:text-zinc-100">Live</button>
+      </div>
+      <div id="next-bet-indicator" class="hidden flex items-center justify-center w-9 h-9 rounded border-2 font-bold text-base"></div>
+    </div>
+    
+    <div class="flex items-center gap-2">
+      <button id="btn-demo-refresh" class="p-2 bg-[#E5446D] hover:bg-[#C43A5D] text-zinc-950 rounded-lg transition-colors shadow-[0_0_10px_rgba(229,68,109,0.5)]" title="Simulate New Shoe">
+        <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+      </button>
+      <button id="btn-live-panel-toggle" class="hidden p-2 rounded-lg transition-colors shadow-sm bg-live-500 hover:bg-live-600 text-zinc-950" title="Toggle Input Panel">
+        <i data-lucide="pencil" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="flex-1 relative overflow-hidden bg-zinc-950 flex flex-col">
+    
+    <!-- Live Input Panel -->
+    <div id="live-input-panel" class="hidden absolute top-2 right-2 bg-zinc-900 border border-zinc-800 p-3 rounded-xl shadow-lg z-30 w-40">
+      <div class="flex flex-col gap-3">
+        <div class="grid grid-cols-2 gap-2 text-center">
+          <div class="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-wider">Player</div>
+          <div class="text-[10px] font-mono text-red-400 font-bold uppercase tracking-wider">Banker</div>
+          
+          <button id="btn-winner-player-nat" class="aspect-square flex flex-col items-center justify-center rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-lg shadow-[0_0_8px_rgba(37,99,235,0.4)] active:scale-95 transition-all cursor-pointer" title="Player Natural Win (P)">
+            <span class="leading-none text-xl">P</span>
+            <span class="text-[8px] font-medium opacity-85 uppercase mt-0.5">Natural</span>
+          </button>
+          <button id="btn-winner-banker-nat" class="aspect-square flex flex-col items-center justify-center rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-lg shadow-[0_0_8px_rgba(220,38,38,0.4)] active:scale-95 transition-all cursor-pointer" title="Banker Natural Win (B)">
+            <span class="leading-none text-xl">B</span>
+            <span class="text-[8px] font-medium opacity-85 uppercase mt-0.5">Natural</span>
+          </button>
+          <button id="btn-winner-player-norm" class="aspect-square flex flex-col items-center justify-center rounded-lg bg-blue-950/40 hover:bg-blue-900/60 border border-blue-600/80 text-blue-400 font-bold text-lg active:scale-95 transition-all cursor-pointer" title="Player Normal Win (P+)">
+            <span class="leading-none text-xl">P+</span>
+            <span class="text-[8px] font-medium opacity-85 uppercase mt-0.5">Normal</span>
+          </button>
+          <button id="btn-winner-banker-norm" class="aspect-square flex flex-col items-center justify-center rounded-lg bg-red-950/40 hover:bg-red-900/60 border border-red-600/80 text-red-400 font-bold text-lg active:scale-95 transition-all cursor-pointer" title="Banker Normal Win (B+)">
+            <span class="leading-none text-xl">B+</span>
+            <span class="text-[8px] font-medium opacity-85 uppercase mt-0.5">Normal</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2 mt-1">
+          <input type="checkbox" id="autoHide" class="rounded border-zinc-700 bg-zinc-950 text-live-500 focus:ring-live-500">
+          <label for="autoHide" class="text-[11px] leading-tight text-zinc-400 select-none">Auto hide</label>
+        </div>
+
+        <div class="flex gap-2">
+          <button id="btn-live-undo" disabled class="flex-1 py-1.5 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-zinc-100 rounded text-xs font-medium transition-colors cursor-pointer">Undo</button>
+          <button id="btn-live-reset" disabled class="flex-1 py-1.5 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-zinc-100 rounded text-xs font-medium transition-colors cursor-pointer">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs Container -->
+    <div class="flex-1 relative">
+      <!-- Chart Tab -->
+      <div id="tab-chart" class="absolute inset-0 transition-opacity duration-200 opacity-100 z-10">
+      <div id="chart-container" class="w-full h-full relative bg-zinc-950">
+        <!-- Chart Controls Group -->
+        <div class="absolute top-3 left-3 flex flex-col gap-2 z-20">
+          <div class="flex items-center gap-3 bg-zinc-900/50 p-1.5 rounded-xl backdrop-blur-sm border border-zinc-800/50">
+            <button id="btn-chart-download" class="p-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-lg transition-colors shadow-sm" title="Download Chart Image">
+              <i data-lucide="download" class="w-5 h-5"></i>
+            </button>
+            
+            <div class="h-6 w-[1px] bg-zinc-700 mx-1"></div>
+
+            <div class="flex bg-zinc-950 p-0.5 rounded-lg border border-zinc-800">
+              <button id="btn-ma-period-6" class="px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors text-zinc-500 hover:text-zinc-300">6</button>
+              <button id="btn-ma-period-9" class="px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors bg-blue-600 text-white">9</button>
+            </div>
+
+            <div class="h-6 w-[1px] bg-zinc-700 mx-1"></div>
+            <button id="btn-breathing-toggle" class="p-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-lg transition-colors shadow-sm" title="Breathing Settings">
+              <i data-lucide="wind" class="w-5 h-5"></i>
+            </button>
+
+            <div class="h-6 w-[1px] bg-zinc-700 mx-1"></div>
+            <button id="btn-help-toggle" class="p-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-lg transition-colors shadow-sm" title="View keyboard shortcuts">
+              <i data-lucide="help-circle" class="w-5 h-5"></i>
+            </button>
+          </div>
+          <div id="selected-hand-info" class="hidden bg-zinc-900/90 px-2.5 py-1.5 rounded-md border border-zinc-700 shadow-sm backdrop-blur-sm text-xs font-mono text-zinc-300 w-fit">
+          </div>
+        </div>
+
+        <canvas id="myChart" tabindex="-1" class="focus:outline-none"></canvas>
+
+        <!-- Breathing Bar Overlay -->
+        <div id="breathing-bar-overlay" class="hidden absolute left-3 top-24 bottom-8 z-30">
+          <div class="relative w-1.5 h-full bg-zinc-700/40 rounded-full overflow-hidden pointer-events-none">
+            <div id="breathing-bar-fill" class="absolute bottom-0 left-0 w-full bg-[#BBCB2E] rounded-full" style="box-shadow: 0 0 10px rgba(187,203,46,0.8)"></div>
+            <div id="breathing-bar-hold" class="absolute left-0 w-full h-3 bg-[#BBCB2E] rounded-sm" style="box-shadow: 0 0 10px rgba(187,203,46,0.8); opacity: 0;"></div>
+          </div>
+        </div>
+
+        <!-- Breathing Settings Modal Overlay -->
+        <div id="breathing-settings-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div id="breathing-settings-popup" class="bg-zinc-900 border border-zinc-800 p-8 rounded-2xl shadow-2xl w-full max-w-sm flex flex-col gap-8">
+            <div class="flex justify-between items-center">
+              <h4 class="text-sm font-bold text-zinc-100 uppercase tracking-[0.2em]">Breathing Pacer</h4>
+              <button id="btn-breathing-settings-close" class="text-zinc-400 hover:text-zinc-100 p-2 hover:bg-zinc-800 rounded-lg transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+              </button>
+            </div>
+
+            <div class="flex items-center justify-between bg-zinc-800/50 p-4 rounded-xl">
+              <span class="text-sm font-medium text-zinc-100">Enable Pacer</span>
+              <button id="btn-breathing-enable-toggle" class="w-12 h-6 bg-zinc-700 rounded-full transition-colors relative">
+                <div id="breathing-enable-dot" class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all"></div>
+              </button>
+            </div>
+
+            <div class="space-y-8">
+              <div class="space-y-3">
+                <div class="flex justify-between text-xs text-zinc-100 uppercase font-bold tracking-wider">
+                  <span class="flex items-center gap-2"><span class="text-[#BBCB2E]">↑</span> Inhale Duration</span>
+                  <span id="label-inhale" class="text-[#BBCB2E] text-sm">2<span class="text-white lowercase">s</span></span>
+                </div>
+                <input type="range" id="input-inhale" min="0.5" max="10" step="0.5" value="2" class="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-[#BBCB2E]">
+              </div>
+              <div class="space-y-3">
+                <div class="flex justify-between text-xs text-zinc-100 uppercase font-bold tracking-wider">
+                  <span class="flex items-center gap-2"><span class="text-[#BBCB2E]">↓</span> Exhale Duration</span>
+                  <span id="label-exhale" class="text-[#BBCB2E] text-sm">3<span class="text-white lowercase">s</span></span>
+                </div>
+                <input type="range" id="input-exhale" min="0.5" max="10" step="0.5" value="3" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-[#BBCB2E]">
+              </div>
+              <div class="space-y-3">
+                <div class="flex justify-between text-xs text-zinc-100 uppercase font-bold tracking-wider">
+                  <span class="flex items-center gap-2"><span class="text-[#BBCB2E]">•</span> Hold Duration</span>
+                  <span id="label-hold" class="text-[#BBCB2E] text-sm">2<span class="text-white lowercase">s</span></span>
+                </div>
+                <input type="range" id="input-hold" min="0.5" max="10" step="0.5" value="2" class="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-[#BBCB2E]">
+              </div>
+            </div>
+
+            <button id="btn-breathing-save" class="w-full py-3 bg-[#BBCB2E] hover:bg-[#A8B82A] text-zinc-950 font-bold rounded-xl transition-all shadow-[0_4px_12px_rgba(187,203,46,0.2)] hover:shadow-[0_4px_20px_rgba(187,203,46,0.3)] active:scale-95">
+              Save Settings
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log Tab -->
+    <div id="tab-log" class="absolute inset-0 overflow-y-auto bg-zinc-950 transition-opacity duration-200 opacity-0 pointer-events-none z-0">
+      <table class="w-full text-sm text-center text-zinc-400">
+        <thead class="text-xs text-zinc-400 uppercase bg-zinc-900 sticky top-0 shadow-sm z-20">
+          <tr>
+            <th class="px-2 py-3 font-semibold">#</th>
+            <th class="px-2 py-3 font-semibold">Score</th>
+            <th class="px-2 py-3 font-semibold">Win</th>
+            <th class="px-2 py-3 font-semibold">Bet</th>
+            <th class="px-2 py-3 font-semibold">Sum</th>
+          </tr>
+        </thead>
+        <tbody id="log-tbody" class="divide-y divide-zinc-800/50">
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <!-- Big Road Container -->
+    <div id="big-road-container" class="flex-none bg-zinc-900 border-t border-zinc-800 p-0.5 z-20 overflow-auto" style="max-height: 20%;">
+      <div id="big-road-grid" class="flex gap-1 h-full items-start"></div>
+    </div>
+  </div>
+
+  <!-- Calculator (Live Mode Only) -->
+  <baccarat-calculator id="live-calculator" class="hidden z-20 px-4 pb-4 pt-1"></baccarat-calculator>
+
+  <!-- Bottom Navigation -->
+  <div id="bottom-nav" class="flex-none flex bg-zinc-900 border-t border-zinc-800 p-2 gap-2 z-20">
+    <button id="btn-tab-chart" class="flex-1 py-3 flex items-center justify-center rounded-lg transition-colors text-[#EA9010] bg-[#EA9010]/10 shadow-[inset_0_0_10px_rgba(234,144,16,0.2)]">
+      <span class="text-xs font-bold uppercase tracking-wider">Chart</span>
+    </button>
+    <button id="btn-tab-log" class="flex-1 py-3 flex items-center justify-center rounded-lg transition-colors text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50">
+      <span class="text-xs font-bold uppercase tracking-wider">Audit Log</span>
+    </button>
+  </div>
+
+  <!-- Reset Confirmation Modal -->
+  <div id="reset-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-xl shadow-2xl max-w-xs w-full mx-4">
+      <h3 class="text-lg font-bold text-zinc-100 mb-2">Reset Data?</h3>
+      <p class="text-sm text-zinc-400 mb-6">This will clear all live tracking data. This action cannot be undone.</p>
+      <div class="flex gap-3">
+        <button id="btn-reset-cancel" class="flex-1 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-lg text-sm font-medium transition-colors">Cancel</button>
+        <button id="btn-reset-confirm" class="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help Modal -->
+  <div id="help-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl shadow-2xl max-w-md w-full relative">
+      <button id="btn-help-close" class="absolute top-4 right-4 text-zinc-500 hover:text-zinc-100 transition-colors">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+      <h3 class="text-xl font-bold text-zinc-100 mb-6 flex items-center gap-2">
+        <i data-lucide="help-circle" class="w-6 h-6 text-blue-500"></i>
+        Keyboard Shortcuts
+      </h3>
+      
+      <div class="space-y-6">
+        <section>
+          <h4 class="text-sm font-bold text-[#E5446D] uppercase tracking-wider mb-3">General / Demo Mode</h4>
+          <div class="grid grid-cols-[100px_1fr] gap-x-4 gap-y-3 text-sm">
+            <div class="flex items-center justify-center bg-zinc-800 rounded px-2 py-1 font-mono text-zinc-100 border border-zinc-700">Space</div>
+            <div class="text-zinc-400">Simulate new shoe</div>
+            
+            <div class="flex items-center justify-center bg-zinc-800 rounded px-2 py-1 font-mono text-zinc-100 border border-zinc-700">← / →</div>
+            <div class="text-zinc-400">Move selection / navigate hands</div>
+            
+            <div class="flex items-center justify-center bg-zinc-800 rounded px-2 py-1 font-mono text-zinc-100 border border-zinc-700">↑</div>
+            <div class="text-zinc-400">Define start of range selection</div>
+            
+            <div class="flex items-center justify-center bg-zinc-800 rounded px-2 py-1 font-mono text-zinc-100 border border-zinc-700">↓</div>
+            <div class="text-zinc-400">Clear selection and mappings</div>
+          </div>
+        </section>
+
+        <section>
+          <h4 class="text-sm font-bold text-live-500 uppercase tracking-wider mb-3">Live Mode Input</h4>
+          <div class="grid grid-cols-[100px_1fr] gap-x-4 gap-y-3 text-sm">
+            <div class="flex items-center justify-center bg-zinc-800 rounded px-2 py-1 font-mono text-zinc-100 border border-zinc-700">O</div>
+            <div class="text-zinc-400">Player Natural (Instant)</div>
+            
+            <div class="flex items-center justify-center bg-zinc-800 rounded px-2 py-1 font-mono text-zinc-100 border border-zinc-700">P</div>
+            <div class="text-zinc-400">Banker Natural (Instant)</div>
+            
+            <div class="flex items-center justify-center bg-zinc-800 rounded px-2 py-1 font-mono text-zinc-100 border border-zinc-700">, or &lt;</div>
+            <div class="text-zinc-400">Player Normal (Instant)</div>
+            
+            <div class="flex items-center justify-center bg-zinc-800 rounded px-2 py-1 font-mono text-zinc-100 border border-zinc-700">. or &gt;</div>
+            <div class="text-zinc-400">Banker Normal (Instant)</div>
+          </div>
+        </section>
+      </div>
+      
+      <button id="btn-help-got-it" class="w-full mt-8 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-100 rounded-xl font-bold transition-all">
+        Got it
+      </button>
+    </div>
+  </div>
+
+  <script src="app.js?v=3"></script>
+</body>
+</html>

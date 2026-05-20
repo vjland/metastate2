@@ -1,0 +1,44 @@
+/* Custom styles */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #09090b; /* zinc-950 */
+  color: #f4f4f5; /* zinc-100 */
+}
+
+/* Custom Scrollbar for a better dark theme experience */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #18181b; /* zinc-900 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3f3f46; /* zinc-700 */
+  border-radius: 4px;
+}
+
+/* Breathing Bar Animations */
+@keyframes breathing-fill {
+  0%, 100% { height: 0%; opacity: 1; }
+  var(--inhale-end) { height: 100%; opacity: 1; }
+  var(--exhale-end) { height: 0%; opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes breathing-hold {
+  0%, var(--exhale-end) { top: 0%; opacity: 0; }
+  var(--exhale-end-delay) { top: 0%; opacity: 1; }
+  100% { top: 100%; opacity: 1; }
+}
+
+.breathing-animate-fill {
+  animation: breathing-fill var(--total-time) infinite ease-in-out;
+}
+
+.breathing-animate-hold {
+  animation: breathing-hold var(--total-time) infinite linear;
+}
