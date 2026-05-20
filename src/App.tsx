@@ -1158,6 +1158,15 @@ export default function App() {
 
             <Line ref={chartRef} data={data} options={options} plugins={[verticalLinePlugin]} />
             
+            {/* Mode Reminder Overlay */}
+            {appMode === "live" && (
+              <div 
+                className="absolute left-1/2 -translate-x-1/2 bottom-5 z-20 pointer-events-none select-none px-4 py-1 rounded-xl bg-zinc-950/40 backdrop-blur-xs text-2xl font-bold text-[#B45309] tracking-[0.25em] whitespace-nowrap"
+              >
+                无知-无能-无为
+              </div>
+            )}
+            
             {/* Breathing Bar Overlay */}
             {appMode === "live" && showBreathingBar && (
               <div className="absolute left-3 top-24 bottom-8 z-30">

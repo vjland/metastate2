@@ -735,6 +735,8 @@ const setMode = (mode) => {
     bottomNav.classList.remove('hidden');
     bigRoadContainer.classList.remove('hidden');
     isPanelOpen = false;
+    const reminder = document.getElementById('live-mode-reminder');
+    if (reminder) reminder.classList.add('hidden');
   } else {
     btnModeLive.className = 'px-3 py-1 rounded-md text-sm font-medium transition-colors bg-live-500 text-zinc-950';
     btnModeDemo.className = 'px-3 py-1 rounded-md text-sm font-medium transition-colors text-zinc-400 hover:text-zinc-100';
@@ -744,6 +746,8 @@ const setMode = (mode) => {
     bottomNav.classList.add('hidden');
     bigRoadContainer.classList.add('hidden');
     if (isPanelOpen) liveInputPanel.classList.remove('hidden');
+    const reminder = document.getElementById('live-mode-reminder');
+    if (reminder) reminder.classList.remove('hidden');
   }
   updateUI();
   updateBreathingUI();
