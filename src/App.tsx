@@ -558,22 +558,22 @@ export default function App() {
         switch (e.key) {
           case "o":
           case "O":
-            if (navigator.vibrate) navigator.vibrate(20);
+            if (navigator.vibrate) navigator.vibrate(80);
             addLiveHand("Player", true);
             break;
           case "p":
           case "P":
-            if (navigator.vibrate) navigator.vibrate(20);
+            if (navigator.vibrate) navigator.vibrate(80);
             addLiveHand("Banker", true);
             break;
           case ",":
           case "<":
-            if (navigator.vibrate) navigator.vibrate(20);
+            if (navigator.vibrate) navigator.vibrate(80);
             addLiveHand("Player", false);
             break;
           case ".":
           case ">":
-            if (navigator.vibrate) navigator.vibrate(20);
+            if (navigator.vibrate) navigator.vibrate(80);
             addLiveHand("Banker", false);
             break;
         }
@@ -968,10 +968,9 @@ export default function App() {
               <div className="grid grid-cols-2 gap-2 text-center">
                 <div className="text-[10px] font-mono text-blue-400 font-bold uppercase tracking-wider">Player</div>
                 <div className="text-[10px] font-mono text-red-400 font-bold uppercase tracking-wider">Banker</div>
-                
                 <button
                   onClick={() => {
-                    if (navigator.vibrate) navigator.vibrate(20);
+                    if (navigator.vibrate) navigator.vibrate(80);
                     addLiveHand("Player", true);
                   }}
                   className="aspect-square flex flex-col items-center justify-center rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-lg shadow-[0_0_8px_rgba(37,99,235,0.4)] active:scale-95 transition-all cursor-pointer"
@@ -982,7 +981,7 @@ export default function App() {
                 </button>
                 <button
                   onClick={() => {
-                    if (navigator.vibrate) navigator.vibrate(20);
+                    if (navigator.vibrate) navigator.vibrate(80);
                     addLiveHand("Banker", true);
                   }}
                   className="aspect-square flex flex-col items-center justify-center rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-lg shadow-[0_0_8px_rgba(220,38,38,0.4)] active:scale-95 transition-all cursor-pointer"
@@ -993,7 +992,7 @@ export default function App() {
                 </button>
                 <button
                   onClick={() => {
-                    if (navigator.vibrate) navigator.vibrate(20);
+                    if (navigator.vibrate) navigator.vibrate(80);
                     addLiveHand("Player", false);
                   }}
                   className="aspect-square flex flex-col items-center justify-center rounded-lg bg-blue-950/40 hover:bg-blue-900/60 border border-blue-600/80 text-blue-400 font-bold text-lg active:scale-95 transition-all cursor-pointer"
@@ -1004,7 +1003,7 @@ export default function App() {
                 </button>
                 <button
                   onClick={() => {
-                    if (navigator.vibrate) navigator.vibrate(20);
+                    if (navigator.vibrate) navigator.vibrate(80);
                     addLiveHand("Banker", false);
                   }}
                   className="aspect-square flex flex-col items-center justify-center rounded-lg bg-red-950/40 hover:bg-red-900/60 border border-red-600/80 text-red-400 font-bold text-lg active:scale-95 transition-all cursor-pointer"

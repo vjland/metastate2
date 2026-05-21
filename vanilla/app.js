@@ -1000,10 +1000,10 @@ function addLiveHand(winner, isNatural) {
   updateUI();
 }
 
-btnWinnerPlayerNat.addEventListener('click', () => { if (navigator.vibrate) navigator.vibrate(20); addLiveHand('Player', true); });
-btnWinnerBankerNat.addEventListener('click', () => { if (navigator.vibrate) navigator.vibrate(20); addLiveHand('Banker', true); });
-btnWinnerPlayerNorm.addEventListener('click', () => { if (navigator.vibrate) navigator.vibrate(20); addLiveHand('Player', false); });
-btnWinnerBankerNorm.addEventListener('click', () => { if (navigator.vibrate) navigator.vibrate(20); addLiveHand('Banker', false); });
+btnWinnerPlayerNat.addEventListener('click', () => { if (navigator.vibrate) navigator.vibrate(80); addLiveHand('Player', true); });
+btnWinnerBankerNat.addEventListener('click', () => { if (navigator.vibrate) navigator.vibrate(80); addLiveHand('Banker', true); });
+btnWinnerPlayerNorm.addEventListener('click', () => { if (navigator.vibrate) navigator.vibrate(80); addLiveHand('Player', false); });
+btnWinnerBankerNorm.addEventListener('click', () => { if (navigator.vibrate) navigator.vibrate(80); addLiveHand('Banker', false); });
 checkboxAutoHide.addEventListener('change', (e) => { 
   autoHide = e.target.checked; 
 });
@@ -1054,22 +1054,22 @@ window.addEventListener('keydown', (e) => {
     switch (e.key) {
       case 'o':
       case 'O':
-        if (navigator.vibrate) navigator.vibrate(20);
+        if (navigator.vibrate) navigator.vibrate(80);
         addLiveHand('Player', true);
         break;
       case 'p':
       case 'P':
-        if (navigator.vibrate) navigator.vibrate(20);
+        if (navigator.vibrate) navigator.vibrate(80);
         addLiveHand('Banker', true);
         break;
       case ',':
       case '<':
-        if (navigator.vibrate) navigator.vibrate(20);
+        if (navigator.vibrate) navigator.vibrate(80);
         addLiveHand('Player', false);
         break;
       case '.':
       case '>':
-        if (navigator.vibrate) navigator.vibrate(20);
+        if (navigator.vibrate) navigator.vibrate(80);
         addLiveHand('Banker', false);
         break;
     }
