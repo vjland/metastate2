@@ -1033,20 +1033,14 @@ export default function App() {
 
               <div className="flex gap-2">
                 <button
-                  onClick={() => {
-                    if (navigator.vibrate) navigator.vibrate(20);
-                    handleLiveUndo();
-                  }}
+                  onClick={handleLiveUndo}
                   disabled={liveLogs.length === 0}
                   className="flex-1 py-1.5 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-zinc-100 rounded text-xs font-medium transition-colors cursor-pointer"
                 >
                   Undo
                 </button>
                 <button
-                  onClick={() => {
-                    if (navigator.vibrate) navigator.vibrate(20);
-                    handleLiveReset();
-                  }}
+                  onClick={handleLiveReset}
                   disabled={liveLogs.length === 0}
                   className="flex-1 py-1.5 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-zinc-100 rounded text-xs font-medium transition-colors cursor-pointer"
                 >

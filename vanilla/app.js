@@ -777,11 +777,19 @@ const setTab = (tab) => {
 };
 
 // Event Listeners
-btnModeDemo.addEventListener('click', () => setMode('demo'));
-btnModeLive.addEventListener('click', () => setMode('live'));
+btnModeDemo.addEventListener('click', () => {
+  setMode('demo');
+});
+btnModeLive.addEventListener('click', () => {
+  setMode('live');
+});
 
-btnTabChart.addEventListener('click', () => setTab('chart'));
-btnTabLog.addEventListener('click', () => setTab('log'));
+btnTabChart.addEventListener('click', () => {
+  setTab('chart');
+});
+btnTabLog.addEventListener('click', () => {
+  setTab('log');
+});
 
 btnHelpToggle.addEventListener('click', () => {
   helpModal.classList.remove('hidden');
@@ -824,9 +832,15 @@ const updateBreathingSettings = () => {
   updateBreathingUI();
 };
 
-inputInhale.addEventListener('input', updateBreathingSettings);
-inputExhale.addEventListener('input', updateBreathingSettings);
-inputHold.addEventListener('input', updateBreathingSettings);
+inputInhale.addEventListener('input', () => {
+  updateBreathingSettings();
+});
+inputExhale.addEventListener('input', () => {
+  updateBreathingSettings();
+});
+inputHold.addEventListener('input', () => {
+  updateBreathingSettings();
+});
 
 function updateBreathingUI() {
   // Update toggle button
@@ -990,10 +1004,11 @@ btnWinnerPlayerNat.addEventListener('click', () => { if (navigator.vibrate) navi
 btnWinnerBankerNat.addEventListener('click', () => { if (navigator.vibrate) navigator.vibrate(20); addLiveHand('Banker', true); });
 btnWinnerPlayerNorm.addEventListener('click', () => { if (navigator.vibrate) navigator.vibrate(20); addLiveHand('Player', false); });
 btnWinnerBankerNorm.addEventListener('click', () => { if (navigator.vibrate) navigator.vibrate(20); addLiveHand('Banker', false); });
-checkboxAutoHide.addEventListener('change', (e) => { autoHide = e.target.checked; });
+checkboxAutoHide.addEventListener('change', (e) => { 
+  autoHide = e.target.checked; 
+});
 
 btnLiveUndo.addEventListener('click', () => {
-  if (navigator.vibrate) navigator.vibrate(20);
   if (liveLogs.length === 0) return;
   liveLogs.pop();
   liveChartData = liveLogs.filter(l => l.winner !== 'Tie').map(l => l.runningSum);
@@ -1001,7 +1016,6 @@ btnLiveUndo.addEventListener('click', () => {
 });
 
 btnLiveReset.addEventListener('click', () => {
-  if (navigator.vibrate) navigator.vibrate(20);
   resetModal.classList.remove('hidden');
 });
 
