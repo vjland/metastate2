@@ -15,8 +15,8 @@ let isPanelOpen = false;
 let autoHide = false;
 let liveWinner = null; // 'Player' | 'Banker' | 'Tie' | null
 let liveIsNatural = null; // boolean | null
-let showMA = false;
-let maPeriod = 9;
+let showMA9 = false;
+let showMA12 = false;
 let selectionStart = null;
 let selectionEnd = null;
 
@@ -155,6 +155,16 @@ const chart = new Chart(ctx, {
       label: 'MA(9)',
       data: [],
       borderColor: '#6A6B83',
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      tension: 0.1,
+      pointRadius: 0,
+      pointHoverRadius: 0,
+      hidden: true
+    }, {
+      label: 'MA(12)',
+      data: [],
+      borderColor: '#A78BFA',
       backgroundColor: 'transparent',
       borderWidth: 1,
       tension: 0.1,
@@ -475,7 +485,8 @@ const updateUI = () => {
 
   // Update Chart
   const color = appMode === 'demo' ? '#E5446D' : '#90BE6D';
-  const maColor = appMode === 'demo' ? '#6A6B83' : '#DE6C83';
+  const ma9Color = appMode === 'demo' ? '#6A6B83' : '#DE6C83';
+  const ma12Color = appMode === 'demo' ? '#A78BFA' : '#38BDF8';
   const chartBg = appMode === 'demo' ? '#09090b' : '#18181b';
   
   chartContainer.style.backgroundColor = chartBg;
@@ -488,31 +499,36 @@ const updateUI = () => {
   chart.data.datasets[0].pointBorderColor = appMode === 'live' ? '#B45309' : 'transparent';
   chart.data.datasets[0].pointBorderWidth = appMode === 'live' ? 1 : 0;
   
-  chart.data.datasets[1].label = `MA(${maPeriod})`;
-  chart.data.datasets[1].data = calculateMA(currentChartData, maPeriod);
-  chart.data.datasets[1].borderColor = maColor;
-  chart.data.datasets[1].hidden = !showMA;
+  // MA(9)
+  chart.data.datasets[1].data = calculateMA(currentChartData, 9);
+  chart.data.datasets[1].borderColor = ma9Color;
+  chart.data.datasets[1].hidden = !showMA9;
+
+  // MA(12)
+  chart.data.datasets[2].data = calculateMA(currentChartData, 12);
+  chart.data.datasets[2].borderColor = ma12Color;
+  chart.data.datasets[2].hidden = !showMA12;
   
   chart.update();
 
   // Update MA Period Buttons
-  const btnMa6 = document.getElementById('btn-ma-period-6');
   const btnMa9 = document.getElementById('btn-ma-period-9');
+  const btnMa12 = document.getElementById('btn-ma-period-12');
   
-  if (showMA && maPeriod === 6) {
-    btnMa6.classList.add('bg-blue-600', 'text-white');
-    btnMa6.classList.remove('text-zinc-500', 'hover:text-zinc-300');
-  } else {
-    btnMa6.classList.remove('bg-blue-600', 'text-white');
-    btnMa6.classList.add('text-zinc-500', 'hover:text-zinc-300');
-  }
-
-  if (showMA && maPeriod === 9) {
+  if (showMA9) {
     btnMa9.classList.add('bg-blue-600', 'text-white');
     btnMa9.classList.remove('text-zinc-500', 'hover:text-zinc-300');
   } else {
     btnMa9.classList.remove('bg-blue-600', 'text-white');
     btnMa9.classList.add('text-zinc-500', 'hover:text-zinc-300');
+  }
+
+  if (showMA12) {
+    btnMa12.classList.add('bg-blue-600', 'text-white');
+    btnMa12.classList.remove('text-zinc-500', 'hover:text-zinc-300');
+  } else {
+    btnMa12.classList.remove('bg-blue-600', 'text-white');
+    btnMa12.classList.add('text-zinc-500', 'hover:text-zinc-300');
   }
 
   // Update Next Bet Indicator
@@ -913,23 +929,13 @@ function restartBreathingAnimations() {
   breathingBarHold.style.animation = `breathing-hold-dynamic ${totalTime}s infinite linear`;
 }
 
-document.getElementById('btn-ma-period-6').addEventListener('click', () => {
-  if (showMA && maPeriod === 6) {
-    showMA = false;
-  } else {
-    maPeriod = 6;
-    showMA = true;
-  }
+document.getElementById('btn-ma-period-9').addEventListener('click', () => {
+  showMA9 = !showMA9;
   updateUI();
 });
 
-document.getElementById('btn-ma-period-9').addEventListener('click', () => {
-  if (showMA && maPeriod === 9) {
-    showMA = false;
-  } else {
-    maPeriod = 9;
-    showMA = true;
-  }
+document.getElementById('btn-ma-period-12').addEventListener('click', () => {
+  showMA12 = !showMA12;
   updateUI();
 });
 

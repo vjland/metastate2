@@ -465,7 +465,8 @@ const BreathingBar = ({ inhale, exhale, hold }: { inhale: number, exhale: number
 export default function App() {
   const [appMode, setAppMode] = useState<"demo" | "live">("demo");
   const [activeTab, setActiveTab] = useState<"chart" | "log">("chart");
-  const [showMA, setShowMA] = useState(false);
+  const [showMA9, setShowMA9] = useState(false);
+  const [showMA12, setShowMA12] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isBreathingSettingsOpen, setIsBreathingSettingsOpen] = useState(false);
   const [showBreathingBar, setShowBreathingBar] = useState(true);
@@ -476,7 +477,6 @@ export default function App() {
   });
   const [selectionStart, setSelectionStart] = useState<number | null>(null);
   const [selectionEnd, setSelectionEnd] = useState<number | null>(null);
-  const [maPeriod, setMaPeriod] = useState<6 | 9>(9);
   const chartRef = useRef<any>(null);
 
   // Demo state
@@ -762,12 +762,26 @@ export default function App() {
         pointBorderColor: appMode === "live" ? "#B45309" : "transparent",
         pointBorderWidth: appMode === "live" ? 1 : 0,
       },
-      ...(showMA
+      ...(showMA9
         ? [
             {
-              label: `MA(${maPeriod})`,
-              data: calculateMA(currentChartData, maPeriod),
+              label: "MA(9)",
+              data: calculateMA(currentChartData, 9),
               borderColor: appMode === "demo" ? "#6A6B83" : "#DE6C83",
+              backgroundColor: "transparent",
+              borderWidth: 1,
+              tension: 0.1,
+              pointRadius: 0,
+              pointHoverRadius: 0,
+            },
+          ]
+        : []),
+      ...(showMA12
+        ? [
+            {
+              label: "MA(12)",
+              data: calculateMA(currentChartData, 12),
+              borderColor: appMode === "demo" ? "#A78BFA" : "#38BDF8", // violet for demo, sky blue for live
               backgroundColor: "transparent",
               borderWidth: 1,
               tension: 0.1,
@@ -1076,22 +1090,16 @@ export default function App() {
 
                 <div className="flex bg-zinc-950 p-0.5 rounded-lg border border-zinc-800">
                   <button
-                    onClick={() => {
-                      if (showMA && maPeriod === 6) setShowMA(false);
-                      else { setMaPeriod(6); setShowMA(true); }
-                    }}
-                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors ${showMA && maPeriod === 6 ? "bg-blue-600 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
-                  >
-                    6
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (showMA && maPeriod === 9) setShowMA(false);
-                      else { setMaPeriod(9); setShowMA(true); }
-                    }}
-                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors ${showMA && maPeriod === 9 ? "bg-blue-600 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+                    onClick={() => setShowMA9(!showMA9)}
+                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors ${showMA9 ? "bg-blue-600 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
                   >
                     9
+                  </button>
+                  <button
+                    onClick={() => setShowMA12(!showMA12)}
+                    className={`px-2.5 py-1 rounded-md text-[11px] font-bold transition-colors ${showMA12 ? "bg-blue-600 text-white" : "text-zinc-500 hover:text-zinc-300"}`}
+                  >
+                    12
                   </button>
                 </div>
 
