@@ -464,7 +464,7 @@ const BreathingBar = ({ inhale, exhale, hold }: { inhale: number, exhale: number
 
 export default function App() {
   const [appMode, setAppMode] = useState<"demo" | "live">("demo");
-  const [activeTab, setActiveTab] = useState<"chart" | "log">("chart");
+  const [activeTab, setActiveTab] = useState<"chart" | "log" | "strategy">("chart");
   const [showMA9, setShowMA9] = useState(false);
   const [showMA12, setShowMA12] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
@@ -1311,6 +1311,94 @@ export default function App() {
             </table>
           </div>
         )}
+
+        {/* Strategy Tab */}
+        {appMode !== "live" && (
+          <div
+            className={`absolute inset-0 overflow-y-auto bg-zinc-950 transition-opacity duration-200 ${activeTab === "strategy" ? "opacity-100 z-10" : "opacity-0 pointer-events-none z-0"}`}
+          >
+            <div className="p-6 text-zinc-300 space-y-6 max-w-2xl mx-auto">
+              <div className="flex items-center gap-2 border-b border-zinc-800 pb-3">
+                <div className="w-1.5 h-6 bg-[#E5446D] rounded-full text-zinc-950"></div>
+                <h2 id="strategy-heading" className="text-lg font-bold text-zinc-100">例牌与常规交替投注策略说明</h2>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-zinc-900/60 p-4 rounded-xl border border-zinc-800/80">
+                  <h3 className="text-sm font-bold text-zinc-100 mb-2 flex items-center gap-2">
+                    <span className="flex h-2 w-2 rounded-full bg-blue-500"></span>
+                    策略核心逻辑
+                  </h3>
+                  <p className="text-xs leading-relaxed text-zinc-400">
+                    本策略根据上一局非和局的胜出牌型（天牌/例牌 还是 常规牌型）来决定下一局的投注目标：
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-zinc-900/40 p-4 rounded-xl border border-zinc-800/60 hover:border-red-900/40 transition-colors">
+                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-950/50 text-red-400 border border-red-900/50 mb-3">
+                      下注庄家规则 (Bet Banker)
+                    </span>
+                    <h4 className="text-xs font-bold text-zinc-200 mb-1.5">上一局非和局为“天然胜出” (Natural Win)</h4>
+                    <p className="text-xs text-zinc-400 leading-relaxed">
+                      若上一局为**无需任何补牌**直接决出胜负的牌局（不论点数是多少，只要闲庄双方均仅凭最初首发的2张牌即完成对决），则系统提示下局投注目标为：<span className="text-red-400 font-bold">庄家 (Banker)</span>。
+                    </p>
+                  </div>
+
+                  <div className="bg-zinc-900/40 p-4 rounded-xl border border-zinc-800/60 hover:border-blue-900/40 transition-colors">
+                    <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-950/50 text-blue-400 border border-blue-900/50 mb-3">
+                      下注闲家规则 (Bet Player)
+                    </span>
+                    <h4 className="text-xs font-bold text-zinc-200 mb-1.5">上一局非和局为“常规胜出” (Normal Win)</h4>
+                    <p className="text-xs text-zinc-400 leading-relaxed">
+                      若上一局中闲家或庄家在对决过程中**进行了补牌**（即有任一方抽取了第3张牌），则判定为常规胜出，系统提示下局投注目标为：<span className="text-blue-400 font-bold">闲家 (Player)</span>。
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-zinc-900/30 p-4 rounded-xl border border-zinc-800/40">
+                  <h3 className="text-sm font-bold text-zinc-200 mb-2.5">
+                    辅助设计与统计图表说明
+                  </h3>
+                  <ul className="text-xs text-zinc-400 space-y-2 list-disc list-inside">
+                    <li>
+                      <span className="text-zinc-200 font-medium">和局 (Tie) 处理：</span>
+                      和局对上一局的输赢类型没有实质影响。在决策逻辑中跳过该和局，继续维持并参考在这之前的非和局结果进行投注决策。
+                    </li>
+                    <li>
+                      <span className="text-zinc-200 font-medium">双移动平均线（非互斥）：</span>
+                      您可以同时在图表中点亮并观察 <span className="text-[#DE6C83] font-semibold">MA(9)</span> 和 <span className="text-[#38BDF8] font-semibold">MA(12)</span>。均线在当前累计资金曲线上方或呈现金叉向上状态，表明本投注策略近期能量走强，属于顺境期；均线调头向下则警示近期由于龙路突变正处于逆境盘整中。
+                    </li>
+                    <li>
+                      <span className="text-zinc-200 font-medium">呼吸状态条：</span>
+                      左侧垂直的呼吸引导条，通过柔和的填充缩放节奏，提示您在投机波动的环境中控制呼吸和稳定的交易情绪。
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-900 font-mono text-[11px] text-zinc-400 space-y-2">
+                  <div className="text-xs font-bold text-zinc-300 mb-1">Live 模式键盘记录快捷键</div>
+                  <div className="flex justify-between border-b border-zinc-900 py-1">
+                    <span>O / o 键:</span>
+                    <span className="text-blue-400 font-semibold">闲家 例牌 (Player Nat)</span>
+                  </div>
+                  <div className="flex justify-between border-b border-zinc-900 py-1">
+                    <span>P / p 键:</span>
+                    <span className="text-red-400 font-semibold">庄家 例牌 (Banker Nat)</span>
+                  </div>
+                  <div className="flex justify-between border-b border-zinc-900 py-1">
+                    <span>, 键 (或 &lt;):</span>
+                    <span className="text-blue-400">闲家 常规 (Player Norm)</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span>. 键 (或 &gt;):</span>
+                    <span className="text-red-400">庄家 常规 (Banker Norm)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         </div>
 
         {/* Big Road */}
@@ -1343,6 +1431,14 @@ export default function App() {
           >
             <span className="text-xs font-bold uppercase tracking-wider">
               Audit Log
+            </span>
+          </button>
+          <button
+            onClick={() => setActiveTab("strategy")}
+            className={`flex-1 py-3 flex items-center justify-center rounded-lg transition-colors ${activeTab === "strategy" ? (appMode === "live" ? "text-live-500 bg-live-500/10" : "text-[#E5446D] bg-[#E5446D]/10 shadow-[inset_0_0_10px_rgba(229,68,109,0.2)]") : "text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50"}`}
+          >
+            <span className="text-xs font-bold uppercase tracking-wider">
+              策略说明
             </span>
           </button>
         </div>

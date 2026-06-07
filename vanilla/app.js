@@ -71,10 +71,12 @@ const btnLiveReset = document.getElementById('btn-live-reset');
 
 const tabChart = document.getElementById('tab-chart');
 const tabLog = document.getElementById('tab-log');
+const tabStrategy = document.getElementById('tab-strategy');
 const logTbody = document.getElementById('log-tbody');
 
 const btnTabChart = document.getElementById('btn-tab-chart');
 const btnTabLog = document.getElementById('btn-tab-log');
+const btnTabStrategy = document.getElementById('btn-tab-strategy');
 
 const resetModal = document.getElementById('reset-modal');
 const btnResetCancel = document.getElementById('btn-reset-cancel');
@@ -775,20 +777,35 @@ const setTab = (tab) => {
   const activeColor = appMode === 'live' ? 'text-live-500 bg-live-500/10' : 'text-[#EA9010] bg-[#EA9010]/10 shadow-[inset_0_0_10px_rgba(234,144,16,0.2)]';
   const inactiveColor = 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/50';
 
+  btnTabChart.className = `flex-1 py-3 flex items-center justify-center rounded-lg transition-colors ${inactiveColor}`;
+  btnTabLog.className = `flex-1 py-3 flex items-center justify-center rounded-lg transition-colors ${inactiveColor}`;
+  if (btnTabStrategy) {
+    btnTabStrategy.className = `flex-1 py-3 flex items-center justify-center rounded-lg transition-colors ${inactiveColor}`;
+  }
+
+  tabChart.classList.remove('opacity-100', 'z-10');
+  tabChart.classList.add('opacity-0', 'pointer-events-none');
+  tabLog.classList.remove('opacity-100', 'z-10');
+  tabLog.classList.add('opacity-0', 'pointer-events-none');
+  if (tabStrategy) {
+    tabStrategy.classList.remove('opacity-100', 'z-10');
+    tabStrategy.classList.add('opacity-0', 'pointer-events-none');
+  }
+
   if (tab === 'chart') {
     btnTabChart.className = `flex-1 py-3 flex items-center justify-center rounded-lg transition-colors ${activeColor}`;
-    btnTabLog.className = `flex-1 py-3 flex items-center justify-center rounded-lg transition-colors ${inactiveColor}`;
     tabChart.classList.remove('opacity-0', 'pointer-events-none');
     tabChart.classList.add('opacity-100', 'z-10');
-    tabLog.classList.remove('opacity-100', 'z-10');
-    tabLog.classList.add('opacity-0', 'pointer-events-none');
-  } else {
+  } else if (tab === 'log') {
     btnTabLog.className = `flex-1 py-3 flex items-center justify-center rounded-lg transition-colors ${activeColor}`;
-    btnTabChart.className = `flex-1 py-3 flex items-center justify-center rounded-lg transition-colors ${inactiveColor}`;
     tabLog.classList.remove('opacity-0', 'pointer-events-none');
     tabLog.classList.add('opacity-100', 'z-10');
-    tabChart.classList.remove('opacity-100', 'z-10');
-    tabChart.classList.add('opacity-0', 'pointer-events-none');
+  } else if (tab === 'strategy') {
+    if (btnTabStrategy) btnTabStrategy.className = `flex-1 py-3 flex items-center justify-center rounded-lg transition-colors ${activeColor}`;
+    if (tabStrategy) {
+      tabStrategy.classList.remove('opacity-0', 'pointer-events-none');
+      tabStrategy.classList.add('opacity-100', 'z-10');
+    }
   }
 };
 
@@ -806,6 +823,11 @@ btnTabChart.addEventListener('click', () => {
 btnTabLog.addEventListener('click', () => {
   setTab('log');
 });
+if (btnTabStrategy) {
+  btnTabStrategy.addEventListener('click', () => {
+    setTab('strategy');
+  });
+}
 
 btnHelpToggle.addEventListener('click', () => {
   helpModal.classList.remove('hidden');
